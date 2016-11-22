@@ -27,7 +27,7 @@
 
 (defn start-transaction-request [params]
   {:request-method :post
-   :url "https://datastore.googleapis.com/v1beta3/projects/{projectId}:beginTransaction"
+   :url "https://datastore.googleapis.com/v1/projects/{projectId}:beginTransaction"
    :as :json})
 
 (defn start-transaction [client params]
@@ -37,7 +37,7 @@
 
 (defn lookup-request [params]
   {:request-method :post
-   :url "https://datastore.googleapis.com/v1beta3/projects/{projectId}:lookup"
+   :url "https://datastore.googleapis.com/v1/projects/{projectId}:lookup"
    :form-params
    {:readOptions
     (if-let [transaction (:transaction params)]
@@ -61,7 +61,7 @@
 
 (defn commit-request [params]
   {:request-method :post
-   :url "https://datastore.googleapis.com/v1beta3/projects/{projectId}:commit"
+   :url "https://datastore.googleapis.com/v1/projects/{projectId}:commit"
    :form-params
    (merge
     {:mode (:mode params)
