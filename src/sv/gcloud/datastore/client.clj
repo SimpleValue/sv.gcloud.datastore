@@ -136,3 +136,15 @@
                                       (f entity))}]))
                        (:operations params)))))]
       result)))
+
+(defn transact-entity [client entity f]
+  (let [result (in-transaction
+                client
+                {:keys [(prepare/prepare-key entity)]}
+                (fn [lookup-result]
+                  (let [entity (parse/parse-entity
+                                (or (get-in lookup-result [:found 0])
+                                    (get-in lookup-result [:missing 0])))]
+                    [{:upsert (prepare/prepare-entity
+                               (f entity))}])))]
+    (parse/parse-entity {:entity (get-in result [:mutations 0 :upsert])})))
