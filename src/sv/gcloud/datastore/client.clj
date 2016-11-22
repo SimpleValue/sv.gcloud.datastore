@@ -94,6 +94,11 @@
           (commit mutations)
           created-entity)))))
 
+(defn upsert-entity-request [params]
+  (commit-request
+   {:mode "NON_TRANSACTIONAL"
+    :mutations {:upsert (prepare/prepare-entity (:entity params))}}))
+
 (defn in-transaction [client params f]
   (let [tx-id (start-transaction client {})
         lookup-request (lookup-request
