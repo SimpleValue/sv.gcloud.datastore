@@ -1,28 +1,25 @@
 (ns sv.gcloud.datastore.entity.parse
   (:require [sv.gcloud.datastore.util.time :as t]))
 
-(defmulti parse-value ffirst)
+(declare parse-value)
 
-(defmethod parse-value :nullValue [value]
-  nil)
+(def parse-fns
+  {:stringValue :stringValue
+   :integerValue #(Long/valueOf (:integerValue %))
+   :booleanValue :booleanValue
+   :nullValue (constantly nil)
+   :doubleValue #(Double/valueOf (:doubleValue %))
+   :timestampValue #(t/unparse-zulu-date-format (:timestampValue %))
+   :arrayValue #(map parse-value (:arrayValue %))})
 
-(defmethod parse-value :booleanValue [value]
-  (:booleanValue value))
-
-(defmethod parse-value :integerValue [value]
-  (Long/valueOf (:integerValue value)))
-
-(defmethod parse-value :doubleValue [value]
-  (Double/valueOf (:doubleValue value)))
-
-(defmethod parse-value :timestampValue [value]
-  (t/unparse-zulu-date-format (:timestampValue value)))
-
-(defmethod parse-value :stringValue [value]
-  (:stringValue value))
-
-(defmethod parse-value :arrayValue [value]
-  (map parse-value (:arrayValue value)))
+(defn parse-value [value]
+  (if-let [parse-fn (some
+                     (fn [[k f]]
+                       (when (contains? value k)
+                         f))
+                     parse-fns)]
+    (parse-fn value)
+    (throw (ex-info "can not parse value" {:value value}))))
 
 (defn parse-properties [properties-response]
   (into
