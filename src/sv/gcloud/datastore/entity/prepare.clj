@@ -1,5 +1,6 @@
 (ns sv.gcloud.datastore.entity.prepare
-  (:require [sv.gcloud.datastore.util.time :as t]))
+  (:require [sv.gcloud.datastore.util.time :as t]
+            [clojure.string :as str]))
 
 (defprotocol DatastoreValue
   (prepare-value [this]))
