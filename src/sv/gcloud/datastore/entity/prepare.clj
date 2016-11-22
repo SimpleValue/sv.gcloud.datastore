@@ -41,7 +41,21 @@
     (fn [[k v]]
       (when-not (str/starts-with? (str k) ":ds")
         [(str/replace (str k) #"^:" "")
-         (prepare-value v)]))
+         (assoc
+          (prepare-value v)
+          ;; Datastore indexes every property by default, this could
+          ;; lead to problems, for example if the value of a string
+          ;; property is too long for indexing. This library includes
+          ;; no property in the index by default. If you like to index
+          ;; a property include its key into the :ds/indexes entry of
+          ;; the entity map:
+          ;;
+          ;; {:ds/kind "entity-key"
+          ;;  :ds/name "123"
+          ;;  :ds/indexes #{:name} ;; :name will be indexed
+          ;;  :name "my entity"}
+          :excludeFromIndexes
+          (not (contains? (:ds/indexes entity) k)))]))
     entity)))
 
 (defn prepare-key [entity]

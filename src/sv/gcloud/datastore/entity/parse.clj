@@ -42,8 +42,17 @@
      (when-let [name (:name path)]
        {:ds/name name}))))
 
+(defn parse-index-info [properties-response]
+  {:ds/indexes (set
+                (keep
+                 (fn [[k value]]
+                   (when-not (:excludeFromIndexes value)
+                     k))
+                 properties-response))})
+
 (defn parse-entity [entity-response]
-  (merge
-   (parse-properties
-    (:properties (:entity entity-response)))
-   (parse-key entity-response)))
+  (let [properties-response (:properties (:entity entity-response))]
+    (merge
+     (parse-properties properties-response)
+     (parse-index-info properties-response)
+     (parse-key entity-response))))
