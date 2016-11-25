@@ -1,4 +1,4 @@
-(defproject sv/gcloud.datastore "0.1.0"
+(defproject sv/gcloud.datastore "0.1.1-SNAPSHOT"
   :description "A client for Google Cloud Datastore."
   :url "https://github.com/SimpleValue/sv.gcloud.storage"
   :license {:name "Eclipse Public License"
